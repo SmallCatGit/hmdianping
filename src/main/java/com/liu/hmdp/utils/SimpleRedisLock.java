@@ -6,6 +6,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.data.redis.core.script.RedisScript;
 
+import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 public class SimpleRedisLock implements ILock {
@@ -57,6 +58,10 @@ public class SimpleRedisLock implements ILock {
 
     /**
      * 释放锁
+     * TODO 判断锁和释放锁是两个动作（因此需要保证这两个操作的原子性）
+     * 1、多线程阻塞时，如果在锁释放的时候阻塞，且触发超时释放，这时新线程获取锁执行自己的业务
+     * 2、如果这个时候刚好之前那个线程阻塞结束，就会去删除其他线程的锁。从而出现多线程并发
+     * Lua脚本保证锁的误删，同时lua脚本的原子性，不会出现线程安全的漏洞
      */
     @Override
     public void unlock() {
@@ -73,6 +78,9 @@ public class SimpleRedisLock implements ILock {
         }*/
 
         // 基于Lua脚本实现分布式锁，只需要调用RedisTemplate中的api execute方法就可实现
-        // 调用脚本
+        // 调用脚本:execute(脚本, KEYS, ARGV) keys(集合): redis中锁的key    argv：线程标识
+        stringRedisTemplate.execute(UNLOCK_SCRIPT,
+                Collections.singletonList(KEY_PREFIX + name),// 单元素集合
+                ID_PREFIX + Thread.currentThread().getId());
     }
 }

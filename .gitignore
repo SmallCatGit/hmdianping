@@ -1,0 +1,30 @@
+# Mobile Tools for java
+#*.class
+
+# Package Files #
+*.jar
+*.war
+*.ear
+*.zip
+
+hs_err_pid*
+
+.idea
+
+.iml
+
+*.bak
+*.class
+*.rar
+*.log
+.project
+.settings
+.classpath
+target
+classes
+lib
+*.DS_store
+.gradle
+build
+out
+log

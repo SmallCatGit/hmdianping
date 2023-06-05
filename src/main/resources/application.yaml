@@ -1,0 +1,34 @@
+server:
+  port: 8081 #服务端口
+
+spring:
+  application:
+    name: hmdp #服务名称
+
+  datasource: #以下是数据库连接池配置
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/hmdp?useSSL=false&serverTimezone=UTC
+    username: root
+    password: 1234
+
+  redis: #Redis的配置
+      host: 192.168.31.125
+      port: 6379
+      password: 123321
+      lettuce: #Redis连接池配置。默认使用的是lettuce
+        pool:
+          max-active: 10
+          max-idle: 10
+          min-idle: 1
+          time-between-eviction-runs: 10s
+
+  # jackson的默认配置
+  jackson:
+    default-property-inclusion: non_null #JSON处理时只处理非空的值
+
+mybatis-plus: #mybatis-plus的别名扫描包，包内的实体类在做mapper配置的时候就不用写全名了，只需要写类名就行了
+  type-aliases-package: com.liu.hmdp.entity #别名扫描包
+
+logging: #日志级别
+  level:
+    com.liu.hmdp: debug

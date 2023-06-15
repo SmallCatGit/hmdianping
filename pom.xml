@@ -82,6 +82,13 @@
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
         </dependency>
+
+        <!--redisson依赖：在redis基础上实现的一个分布式工具的集合，分布式系统上用到的工具，里面都有-->
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson</artifactId>
+            <version>3.13.6</version>
+        </dependency>
     </dependencies>
 
     <build>

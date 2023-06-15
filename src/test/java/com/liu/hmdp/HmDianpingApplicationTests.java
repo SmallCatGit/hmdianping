@@ -5,6 +5,8 @@ import com.liu.hmdp.service.impl.ShopServiceImpl;
 import com.liu.hmdp.utils.CacheClient;
 import com.liu.hmdp.utils.RedisIdWorker;
 import org.junit.jupiter.api.Test;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.Resource;
@@ -27,6 +29,9 @@ class HmDianpingApplicationTests {
 
     @Resource
     private RedisIdWorker redisIdWorker;
+
+    @Resource
+    private RedissonClient redissonClient;
 
     // 线程池 500线程
     private ExecutorService es = Executors.newFixedThreadPool(500);
@@ -73,6 +78,23 @@ class HmDianpingApplicationTests {
         Shop shop = shopService.getById(1L);
         // 设置逻辑过期时间
         cacheClient.setWithLoginExpire(CACHE_SHOP_KEY + 1L, shop, 10L, TimeUnit.SECONDS);
+    }
+
+    @Test
+    void testRedisson() throws InterruptedException {
+        // 获取锁（可重入），指定锁的名称
+        RLock lock = redissonClient.getLock("anylock");
+        // 尝试获取锁，参数分别是：获取锁的最大等待时间（期间会重试），锁自动释放时间，时间单位
+        boolean isLock = lock.tryLock(1, 10, TimeUnit.SECONDS);
+        // 判断锁是否获取成功
+        if (isLock) {
+            try {
+                System.out.println("执行业务");
+            } finally {
+                // 释放锁
+                lock.unlock();
+            }
+        }
     }
 
 }

@@ -10,6 +10,8 @@ import com.liu.hmdp.service.VoucherOrderService;
 import com.liu.hmdp.utils.RedisIdWorker;
 import com.liu.hmdp.utils.SimpleRedisLock;
 import com.liu.hmdp.utils.UserHolder;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -29,6 +31,9 @@ public class VoucherOrderServiceImpl extends ServiceImpl<VoucherOrderMapper, Vou
 
     @Resource
     private StringRedisTemplate stringRedisTemplate;
+
+    @Resource
+    private RedissonClient redissonClient;
 
     /**
      * 优惠券秒杀下单
@@ -75,9 +80,12 @@ public class VoucherOrderServiceImpl extends ServiceImpl<VoucherOrderMapper, Vou
 
         Long userId = UserHolder.getUser().getId();
         // 创建锁对象( TODO 锁同一个用户，不同的用户不能被锁 -> 以业务标识 + 用户id为锁)
-        SimpleRedisLock lock = new SimpleRedisLock(stringRedisTemplate, "order:" + userId);
-        // 尝试获取锁
-        boolean isLock = lock.tryLock(1200); // TODO 用于测试，所以时间给的长，真正业务的时候根据业务时间指定时间
+        // SimpleRedisLock lock = new SimpleRedisLock(stringRedisTemplate, "order:" + userId);
+        // TODO 使用Redisson的锁，改进自定义锁的功能
+        RLock lock = redissonClient.getLock("lock:order" + userId);
+        // 尝试获取锁(失败不等待，直接使用无参最简单的方式)
+        // boolean isLock = lock.tryLock(1200); // TODO 用于测试，所以时间给的长，真正业务的时候根据业务时间指定时间（自定义锁的测试）
+        boolean isLock = lock.tryLock();
 
         // 判断锁是否获取成功
         if (!isLock) {

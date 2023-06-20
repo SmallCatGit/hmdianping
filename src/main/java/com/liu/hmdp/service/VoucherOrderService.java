@@ -10,5 +10,5 @@ public interface VoucherOrderService extends IService<VoucherOrder> {
     Result seckillVoucher(Long voucherId);
 
     // 查询库存->判断订单->减库存->创建订单
-    Result createVoucherOrder(Long voucherId);
+    void createVoucherOrder(VoucherOrder voucherOrder);
 }

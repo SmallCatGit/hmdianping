@@ -1,7 +1,7 @@
 package com.liu.hmdp.utils;
 
 /**
- * 常量工具类
+ * 常量工具类（redis）
  */
 public class RedisConstants {
     // 登录保存验证码的业务名：做什么的：key
@@ -37,8 +37,17 @@ public class RedisConstants {
 
     // 秒杀资格判断
     public static final String SECKILL_STOCK_KEY = "seckill:stock:";
+
+    // 博客点赞键的头
     public static final String BLOG_LIKED_KEY = "blog:liked:";
+
+    // 关注和取关
+    public static final String FOLLOW_KEY = "follows:";
+
+    // 推送笔记给粉丝
     public static final String FEED_KEY = "feed:";
+
+    // 添加店铺信息到redis中（在测试方法中使用）
     public static final String SHOP_GEO_KEY = "shop:geo:";
     public static final String USER_SIGN_KEY = "sign:";
 }

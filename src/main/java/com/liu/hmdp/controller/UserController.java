@@ -1,9 +1,13 @@
 package com.liu.hmdp.controller;
 
 
+import cn.hutool.core.bean.BeanUtil;
+import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.liu.hmdp.dto.LoginFormDTO;
 import com.liu.hmdp.dto.Result;
 import com.liu.hmdp.dto.UserDTO;
+import com.liu.hmdp.entity.User;
 import com.liu.hmdp.entity.UserInfo;
 import com.liu.hmdp.service.UserInfoService;
 import com.liu.hmdp.service.UserService;
@@ -13,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
+import javax.websocket.server.PathParam;
 
 @Slf4j
 @RestController
@@ -78,5 +83,27 @@ public class UserController {
         info.setUpdateTime(null);
         // 返回
         return Result.ok(info);
+    }
+
+    /**
+     * 根据id查用户，进入博客主页查询用户信息
+     *
+     * @param userId
+     * @return
+     */
+    @GetMapping("/{id}")
+    public Result queryUserById(@PathVariable("id") Long userId) {
+        /*这个只能查看当前登录用户的主页，TODO 测试不通过
+        UserDTO dto = UserHolder.getUser();
+        return Result.ok(dto);*/
+        // 根据id，查询用户
+        User user = userService.getById(userId);
+        // 判断用户是否存在
+        if (user == null) {
+            return Result.fail("用户不存在");
+        }
+        UserDTO userDTO = BeanUtil.copyProperties(user, UserDTO.class);
+        // 返回
+        return Result.ok(userDTO);
     }
 }

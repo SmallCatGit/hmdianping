@@ -11,4 +11,7 @@ public interface ShopService extends IService<Shop> {
 
     // 更新店铺并删除缓存
     Result updateShopAndRemoveCache(Shop shop);
+
+    // 根据商铺类型分页查询商铺信息
+    Result queryShopByType(Integer typeId, Integer current, Double x, Double y);
 }

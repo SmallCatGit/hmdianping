@@ -9,9 +9,15 @@ import javax.servlet.http.HttpSession;
 
 public interface UserService extends IService<User> {
 
-    //根据注册填写的手机号发送验证码并且保存到session中
+    // 根据注册填写的手机号发送验证码并且保存到session中
     Result sendCode(String phone, HttpSession session);
 
     // 根据手机号和验证码完成登录
     Result login(LoginFormDTO loginForm, HttpSession session);
+
+    // 当前用户当天签到
+    Result sign();
+
+    // 当前用户截至当前时间在本月的连续签到天数
+    Result signCount();
 }

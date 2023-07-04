@@ -49,5 +49,7 @@ public class RedisConstants {
 
     // 添加店铺信息到redis中（在测试方法中使用）
     public static final String SHOP_GEO_KEY = "shop:geo:";
+
+    // 用户签到信息头
     public static final String USER_SIGN_KEY = "sign:";
 }
